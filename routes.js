@@ -15,10 +15,17 @@ MKHET.init = (app)=>{
 
     MKHET.sessions = {};
 
+    // API
     app.post('/mkhet/r/', (req, res) => {
         let O = req.body;
 
         let rid = O.rid;
+        let sid = O.sid;
+
+        if (sid){
+            let sidpath = path.join(MKHET.DIR_RECORDS, "/"+sid+"/");
+            if (!fs.existsSync(sidpath)) makeDir.sync(sidpath);
+        }
 
         if (!MKHET.sessions[rid]) MKHET.sessions[rid] = [];
 
@@ -26,14 +33,28 @@ MKHET.init = (app)=>{
 
         //console.log(MKHET.sessions[rid]);
 
-        MKHET.writeCSV(rid, O.data);
+        MKHET.writeCSV(rid, O.data, sid);
 
         res.send(true);
     });
 };
 
-MKHET.writeCSV = (rid, records)=>{
-    let fname = MKHET.DIR_RECORDS + rid + ".csv";
+MKHET.generateYMD = ()=>{
+    let today = new Date();
+    let dd   = String( today.getDate() );
+    let mm   = String( today.getMonth()+1 ); 
+    let yyyy = String( today.getFullYear() );
+    if(dd<10) dd = '0'+dd;
+    if(mm<10) mm = '0'+mm;
+
+    return yyyy+mm+dd;
+};
+
+MKHET.writeCSV = (rid, records, subf)=>{
+    let fname = MKHET.DIR_RECORDS;
+    if (subf) fname += "/"+subf+"/";
+
+    fname += MKHET.generateYMD() + "-" + rid + ".csv";
     
     //let records = MKHET.sessions[rid];
     if (!records) return;

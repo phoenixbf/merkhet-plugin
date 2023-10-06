@@ -13,19 +13,20 @@ window.addEventListener('load',() => {
     let MK = new ATON.Flare();
     MK.API = `${ATON.BASE_URL}/mkhet/`;
 
+    MK.generateID = ()=>{ return Math.random().toString(36).substr(2,9); };
+
     let PP   = new URLSearchParams(window.location.search);
     let mkhet = PP.get('mkhet');
     if (!mkhet) return;
 
-    let rid = ATON.Utils.generateID("r");
-
     MK._rCount = -1;
     MK._chunkSize = 500;
-    //MK._maxRecords = 1000;
-
+    //MK._maxRecords = 1000;    
     MK._bSending = false;
 
+    let rid = MK.generateID();
     MK._fname = rid + ".csv";
+    MK._sid = undefined;
 
     MK.reset = ()=>{
         MK._tStart = undefined;
@@ -35,8 +36,6 @@ window.addEventListener('load',() => {
 
         MK._csvdata = "Time, posx, posy, posz, dirx, diry, dirz";
         MK._data = [];
-
-        MK._sid   = undefined;
     };
 
     MK.setup = ()=>{
@@ -44,7 +43,7 @@ window.addEventListener('load',() => {
         MK._freq = parseFloat(mkhet);
 
         ATON.on("SceneJSONLoaded", sid =>{
-            MK._sid = sid.replace("/","_");
+            MK._sid = sid.replace("/","-");
             MK._fname = MK._sid+"-"+rid+".csv";
             console.log(MK._fname)
         });
@@ -72,14 +71,17 @@ window.addEventListener('load',() => {
         let cpov = ATON.Nav._currPOV;
         if (!cpov) return;
 
-        let info = ATON._renderer.info;
-
-
+        // Send data chunk
         if (MK._rCount >= MK._chunkSize && !MK._bSending){
 
             MK._bSending = true;
 
-            ATON.Utils.postJSON(MK.API+"r/", {rid: rid, data: MK._data}, (b)=>{
+            let chunk = {};
+            chunk.rid  = rid;
+            chunk.data = MK._data;
+            chunk.sid  = MK._sid;
+
+            ATON.Utils.postJSON(MK.API+"r/", chunk, (b)=>{
                 console.log("Record sent");
                 MK.reset();
                 MK._bSending = false;
