@@ -13,7 +13,7 @@ MKHET.init = (app)=>{
 
     if (!fs.existsSync(MKHET.DIR_RECORDS)) makeDir.sync(MKHET.DIR_RECORDS);
 
-    MKHET.sessions = {};
+    //MKHET.sessions = {};
 
     // API
     app.post('/mkhet/r/', (req, res) => {
@@ -27,9 +27,8 @@ MKHET.init = (app)=>{
             if (!fs.existsSync(sidpath)) makeDir.sync(sidpath);
         }
 
-        if (!MKHET.sessions[rid]) MKHET.sessions[rid] = [];
-
-        MKHET.sessions[rid] = MKHET.sessions[rid].concat(O.data);
+        //if (!MKHET.sessions[rid]) MKHET.sessions[rid] = [];
+        //MKHET.sessions[rid] = MKHET.sessions[rid].concat(O.data);
 
         //console.log(MKHET.sessions[rid]);
 
