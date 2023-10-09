@@ -2,8 +2,8 @@
     ATON Merkhet
     
     Allows to track and generate records about explorative sessions 
-    Requires url parameter mkhet=<freq> to start
-    E.g.: mkhet=0.5
+    Requires url parameter mkhet=<freq_msec> to start
+    E.g.: mkhet=500
 
     author: bruno.fanini_AT_gmail.com
 
@@ -13,14 +13,17 @@ window.addEventListener('load',() => {
     let MK = new ATON.Flare();
     MK.API = `${ATON.BASE_URL}/mkhet/`;
 
+    MK.PREC_TIME  = 4;
+    MK.PREC_SPACE = 3;
+
     MK.generateID = ()=>{ return Math.random().toString(36).substr(2,9); };
 
     let PP   = new URLSearchParams(window.location.search);
-    let mkhet = PP.get('mkhet');
-    if (!mkhet) return;
+    let freq = PP.get('mk.freq');
+    if (!freq) return;
 
     MK._rCount = -1;
-    MK._chunkSize = 500;
+    MK._chunkSize = 100;
     //MK._maxRecords = 1000;    
     MK._bSending = false;
 
@@ -39,8 +42,8 @@ window.addEventListener('load',() => {
     };
 
     MK.setup = ()=>{
-
-        MK._freq = parseFloat(mkhet);
+        MK._freq = parseInt(freq);
+        if (MK._freq >= 100) window.setInterval(MK.mark, MK._freq);
 
         ATON.on("SceneJSONLoaded", sid =>{
             MK._sid = sid.replace("/","-");
@@ -63,8 +66,12 @@ window.addEventListener('load',() => {
 
         console.log("Merkhet flare initialized.");
     };
-
+/*
     MK.update = ()=>{
+
+    };
+*/
+    MK.mark = ()=>{
         if (MK._rCount < 0) return;
         if (ATON._dt < 0.0) return;
 
@@ -114,19 +121,19 @@ window.addEventListener('load',() => {
         let dz = ATON.Nav._vDir.z;
 
         let str = "\n";
-        str += ATON.getElapsedTime().toPrecision(2) + ",";
-        str += px.toPrecision(3) + ",";
-        str += py.toPrecision(3) + ",";
-        str += pz.toPrecision(3) + ",";
+        str += ATON.getElapsedTime().toPrecision(MK.PREC_TIME) + ",";
+        str += px.toPrecision(MK.PREC_SPACE) + ",";
+        str += py.toPrecision(MK.PREC_SPACE) + ",";
+        str += pz.toPrecision(MK.PREC_SPACE) + ",";
 
-        str += dx.toPrecision(3) + ",";
-        str += dy.toPrecision(3) + ",";
-        str += dz.toPrecision(3); // + ",";
+        str += dx.toPrecision(MK.PREC_SPACE) + ",";
+        str += dy.toPrecision(MK.PREC_SPACE) + ",";
+        str += dz.toPrecision(MK.PREC_SPACE); // + ",";
 
         MK._data.push({
-            time: ATON.getElapsedTime().toPrecision(2),
-            pos: [px.toPrecision(3), py.toPrecision(3), pz.toPrecision(3)],
-            dir: [dx.toPrecision(3), dy.toPrecision(3), dz.toPrecision(3)]
+            time: ATON.getElapsedTime().toPrecision(MK.PREC_TIME),
+            pos: [ px.toPrecision(MK.PREC_SPACE), py.toPrecision(MK.PREC_SPACE), pz.toPrecision(MK.PREC_SPACE) ],
+            dir: [ dx.toPrecision(MK.PREC_SPACE), dy.toPrecision(MK.PREC_SPACE), dz.toPrecision(MK.PREC_SPACE) ]
         });
         
         MK._csvdata += str;
