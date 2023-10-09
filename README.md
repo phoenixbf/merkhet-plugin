@@ -2,8 +2,8 @@
 
 ![alt text](./public/merkhet.jpg)
 
-This flare (plugin) allows to track and generate records about users' sessions in ATON 3D scenes. Requires url parameter `mkhet=<freq>` to start, e.g.: `?mkhet=0.5`
-Records are stored as CSV records on deployment node (server-side) inside the "records/" folder.
+This flare (plugin) allows to track and generate records about users' sessions in ATON 3D scenes. Requires url parameter `mk.freq=<msec>` to start tracking with given time interval (milliseconds), e.g.: `?mk.freq=300`
+Records are generated and stored as CSV records on deployment node (server-side) inside the "records/" folder.
 
 
 ## Getting started

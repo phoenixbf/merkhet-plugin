@@ -1,9 +1,7 @@
 /*
     ATON Merkhet
     
-    Allows to track and generate records about explorative sessions 
-    Requires url parameter mkhet=<freq_msec> to start
-    E.g.: mkhet=500
+    Allows to track and generate records about explorative sessions
 
     author: bruno.fanini_AT_gmail.com
 
