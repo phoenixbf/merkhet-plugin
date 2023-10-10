@@ -20,19 +20,25 @@ window.addEventListener('load',() => {
     let freq = PP.get('mk.freq');
     if (!freq) return;
 
-    MK._rCount = -1;
-    MK._chunkSize = 100;
-    //MK._maxRecords = 1000;    
+    MK._rCount    = 0;
+    MK._data = [];
+    
+    // Server
+    MK._chunkSize = 100;    
     MK._bSending = false;
-
+    
     let rid = MK.generateID();
     MK._fname = rid + ".csv";
     MK._sid = undefined;
 
-    MK.reset = ()=>{
-        MK._tStart = undefined;
-        MK._t      = 0.0;
-        
+    MK._tStart = undefined;
+    
+    MK._duration = 60;
+    if (PP.get('mk.dur')) MK._duration = parseInt( PP.get('mk.dur') );
+
+    MK._bCapture = false;
+
+    MK.resetChunk = ()=>{
         MK._rCount = 0;
 
         MK._csvdata = "Time, posx, posy, posz, dirx, diry, dirz";
@@ -41,7 +47,9 @@ window.addEventListener('load',() => {
 
     MK.setup = ()=>{
         MK._freq = parseInt(freq);
-        if (MK._freq >= 100) window.setInterval(MK.mark, MK._freq);
+        if (MK._freq >= 50){
+            window.setInterval(MK.mark, MK._freq);
+        }
 
         ATON.on("SceneJSONLoaded", sid =>{
             MK._sid = sid.replace("/","-");
@@ -50,11 +58,12 @@ window.addEventListener('load',() => {
         });
 
         ATON.on("AllNodeRequestsCompleted", ()=>{
-            MK.reset();
+            MK.resetChunk();
+            MK._bCapture = true;
         });
 
         ATON.on("XRmode", b =>{
-            MK.reset();
+            MK.resetChunk();
 
             if (b){
                 if (MK._sid !== undefined) MK._fname = MK._sid+"-"+rid+"-xr.csv";
@@ -64,34 +73,43 @@ window.addEventListener('load',() => {
 
         console.log("Merkhet flare initialized.");
     };
-/*
-    MK.update = ()=>{
 
+    MK.sendDataChunk = ()=>{
+        if (MK._bSending) return;
+
+        MK._bSending = true;
+
+        let chunk = {};
+        chunk.rid  = rid;
+        chunk.data = MK._data;
+        chunk.sid  = MK._sid;
+
+        ATON.Utils.postJSON(MK.API+"r/", chunk, (b)=>{
+            console.log("Record sent");
+            MK.resetChunk();
+            MK._bSending = false;
+        });
     };
-*/
+
     MK.mark = ()=>{
-        if (MK._rCount < 0) return;
+        if (!MK._bCapture) return;
         if (ATON._dt < 0.0) return;
 
         let cpov = ATON.Nav._currPOV;
         if (!cpov) return;
 
-        // Send data chunk
-        if (MK._rCount >= MK._chunkSize && !MK._bSending){
-
-            MK._bSending = true;
-
-            let chunk = {};
-            chunk.rid  = rid;
-            chunk.data = MK._data;
-            chunk.sid  = MK._sid;
-
-            ATON.Utils.postJSON(MK.API+"r/", chunk, (b)=>{
-                console.log("Record sent");
-                MK.reset();
-                MK._bSending = false;
-            });
+        if (MK._tStart === undefined) MK._tStart = ATON._clock.elapsedTime;
+        else {
+            if ((ATON._clock.elapsedTime - MK._tStart) > MK._duration){
+                MK.sendDataChunk();
+                
+                MK._bCapture = false;
+                console.log("END");
+            }
         }
+
+        // Send data chunk
+        if (MK._rCount >= MK._chunkSize) MK.sendDataChunk();
 
 /*
         if (MK._rCount >= MK._chunkSize){
@@ -103,7 +121,7 @@ window.addEventListener('load',() => {
                 console.log("Record sent");
             });
             
-            MK.reset();
+            MK.resetChunk();
 
             MK._rCount = -1;
             return;
@@ -140,6 +158,12 @@ window.addEventListener('load',() => {
 
         MK._rCount++;
     };
+
+/*
+    MK.update = ()=>{
+
+    };
+*/
 
     ATON.addFlare( MK );
 });

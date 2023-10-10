@@ -4,7 +4,7 @@ const fs      = require('fs');
 const path    = require('path');
 const makeDir = require('make-dir');
 
-
+MKHET.API = "/mkhet/";
 
 MKHET.init = (app)=>{
     console.log("Merkhet component started");
@@ -16,7 +16,7 @@ MKHET.init = (app)=>{
     //MKHET.sessions = {};
 
     // API
-    app.post('/mkhet/r/', (req, res) => {
+    app.post(MKHET.API+'r/', (req, res) => {
         let O = req.body;
 
         let rid = O.rid;
@@ -35,6 +35,24 @@ MKHET.init = (app)=>{
         MKHET.writeCSV(rid, O.data, sid);
 
         res.send(true);
+    });
+
+    app.get(MKHET.API+"r/:sid/:rid", (req,res,next)=>{
+
+        let sid = req.params.sid;
+        let rid = req.params.rid;
+
+        let rpath = path.join( MKHET.DIR_RECORDS, sid+"/"+rid );
+        res.sendFile( rpath );
+/*
+        fs.readFile(rpath,'utf8', (err, data) => {
+            if (err) console.error(err);
+
+            res.send( data );
+          });
+*/  
+
+        //next();
     });
 };
 
