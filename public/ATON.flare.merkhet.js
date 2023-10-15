@@ -17,8 +17,11 @@ window.addEventListener('load',() => {
     MK.generateID = ()=>{ return Math.random().toString(36).substr(2,9); };
 
     let PP   = new URLSearchParams(window.location.search);
+    
     let freq = PP.get('mk.freq');
-    if (!freq) return;
+    MK._loadrid = PP.get('mk.load');
+
+    if (!freq && !MK._loadrid) return;
 
     MK._rCount    = 0;
     MK._data = [];
@@ -29,7 +32,8 @@ window.addEventListener('load',() => {
     
     let rid = MK.generateID();
     MK._fname = rid + ".csv";
-    MK._sid = undefined;
+    MK._freq = undefined;
+    MK._sid  = undefined;
 
     MK._tStart = undefined;
     
@@ -53,16 +57,32 @@ window.addEventListener('load',() => {
 
         ATON.on("SceneJSONLoaded", sid =>{
             MK._sid = sid.replace("/","-");
-            MK._fname = MK._sid+"-"+rid+".csv";
-            console.log(MK._fname)
+
+            if (!MK._freq){
+                if (MK._loadrid){
+                    
+                    $.get(MK.API+"r/"+MK._sid+"/"+MK._loadrid, ( data )=>{
+                        MK.renderCSVRecord(data);
+                        //console.log(data);
+                    });
+                }
+            }
+            else {    
+                MK._fname = MK._sid+"-"+rid+".csv";
+                console.log(MK._fname);
+            }
         });
 
         ATON.on("AllNodeRequestsCompleted", ()=>{
+            if (!MK._freq) return;
+
             MK.resetChunk();
             MK._bCapture = true;
         });
 
         ATON.on("XRmode", b =>{
+            if (!MK._freq) return;
+
             MK.resetChunk();
 
             if (b){
@@ -164,6 +184,27 @@ window.addEventListener('load',() => {
 
     };
 */
+
+    MK.renderCSVRecord = (data)=>{
+        let rows = data.split("\n");
+        let num = rows.length;
+        let values;
+
+        //console.log(rows)
+
+        for (let m=1; m<num; m++){
+            let M = rows[m];
+
+            values = M.split(",");
+
+            let px = parseFloat(values[1]);
+            let py = parseFloat(values[2]);
+            let pz = parseFloat(values[3]);
+
+            //console.log(px,py,pz);
+
+        }
+    };
 
     ATON.addFlare( MK );
 });
