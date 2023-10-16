@@ -23,11 +23,11 @@ window.addEventListener('load',() => {
 
     if (!freq && !MK._loadrid) return;
 
-    MK._rCount    = 0;
-    MK._data = [];
+    MK._rCount = 0;
+    MK._data   = [];
     
     // Server
-    MK._chunkSize = 100;    
+    MK._chunkSize = 50;  
     MK._bSending = false;
     
     let rid = MK.generateID();
@@ -40,12 +40,15 @@ window.addEventListener('load',() => {
     MK._duration = 60;
     if (PP.get('mk.dur')) MK._duration = parseInt( PP.get('mk.dur') );
 
+    MK._filterNav = undefined;
+    if (PP.get('mk.nav')) MK._filterNav = parseInt( PP.get('mk.nav') );
+
     MK._bCapture = false;
 
     MK.resetChunk = ()=>{
         MK._rCount = 0;
 
-        MK._csvdata = "Time, posx, posy, posz, dirx, diry, dirz";
+        MK._csvdata = "time, nav, posx, posy, posz, dirx, diry, dirz, fov";
         MK._data = [];
     };
 
@@ -115,6 +118,12 @@ window.addEventListener('load',() => {
         if (!MK._bCapture) return;
         if (ATON._dt < 0.0) return;
 
+        if (MK._filterNav !== undefined){
+            if (MK._filterNav==="OB" && !ATON.Nav.isOrbit()) return;
+            if (MK._filterNav==="FP" && !ATON.Nav.isFirstPerson()) return;
+            if (MK._filterNav==="DO" && !ATON.Nav.isDevOri()) return;
+        }
+
         let cpov = ATON.Nav._currPOV;
         if (!cpov) return;
 
@@ -125,6 +134,7 @@ window.addEventListener('load',() => {
                 
                 MK._bCapture = false;
                 console.log("END");
+                return;
             }
         }
 
@@ -156,20 +166,46 @@ window.addEventListener('load',() => {
         let dy = ATON.Nav._vDir.y;
         let dz = ATON.Nav._vDir.z;
 
+        let fov = parseInt(ATON.Nav.getFOV());
+
         let str = "\n";
+        
+        // Time
         str += ATON.getElapsedTime().toPrecision(MK.PREC_TIME) + ",";
+
+        // Nav
+        let nav = "";
+        if (ATON.XR._bPresenting){
+            if (ATON.XR._sessionType === "immersive-ar") nav = "AR";
+            else nav = "VR";
+        }
+        else {
+            if (ATON.Nav.isOrbit()) nav = "OB";
+            if (ATON.Nav.isFirstPerson()) nav = "FP";
+            if (ATON.Nav.isDevOri()) nav = "DO";
+        }
+
+        str += nav + ",";
+
+        // Position
         str += px.toPrecision(MK.PREC_SPACE) + ",";
         str += py.toPrecision(MK.PREC_SPACE) + ",";
         str += pz.toPrecision(MK.PREC_SPACE) + ",";
 
+        // Direction
         str += dx.toPrecision(MK.PREC_SPACE) + ",";
         str += dy.toPrecision(MK.PREC_SPACE) + ",";
-        str += dz.toPrecision(MK.PREC_SPACE); // + ",";
+        str += dz.toPrecision(MK.PREC_SPACE) + ",";
+        
+        // FoV
+        str += fov;
 
         MK._data.push({
             time: ATON.getElapsedTime().toPrecision(MK.PREC_TIME),
+            nav: nav,
             pos: [ px.toPrecision(MK.PREC_SPACE), py.toPrecision(MK.PREC_SPACE), pz.toPrecision(MK.PREC_SPACE) ],
-            dir: [ dx.toPrecision(MK.PREC_SPACE), dy.toPrecision(MK.PREC_SPACE), dz.toPrecision(MK.PREC_SPACE) ]
+            dir: [ dx.toPrecision(MK.PREC_SPACE), dy.toPrecision(MK.PREC_SPACE), dz.toPrecision(MK.PREC_SPACE) ],
+            fov: fov
         });
         
         MK._csvdata += str;
@@ -201,7 +237,7 @@ window.addEventListener('load',() => {
             let py = parseFloat(values[2]);
             let pz = parseFloat(values[3]);
 
-            //console.log(px,py,pz);
+            console.log(px,py,pz);
 
         }
     };

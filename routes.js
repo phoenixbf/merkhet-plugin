@@ -77,18 +77,24 @@ MKHET.writeCSV = (rid, records, subf)=>{
     if (!records) return;
 
     let strdata = "";
-    let header = "Time, posx, posy, posz, dirx, diry, dirz\n";
+    let header = "time, nav, posx, posy, posz, dirx, diry, dirz, fov\n";
 
     for (let r in records){
-        strdata += records[r].time + ",";
+        let R = records[r];
 
-        strdata += records[r].pos[0] + ",";
-        strdata += records[r].pos[1] + ",";
-        strdata += records[r].pos[2] + ",";
+        strdata += R.time + ",";
 
-        strdata += records[r].dir[0] + ",";
-        strdata += records[r].dir[1] + ",";
-        strdata += records[r].dir[2];
+        strdata += R.nav + ",";
+
+        strdata += R.pos[0] + ",";
+        strdata += R.pos[1] + ",";
+        strdata += R.pos[2] + ",";
+
+        strdata += R.dir[0] + ",";
+        strdata += R.dir[1] + ",";
+        strdata += R.dir[2] + ",";
+
+        strdata += R.fov;
 
         strdata += "\n";
     }
