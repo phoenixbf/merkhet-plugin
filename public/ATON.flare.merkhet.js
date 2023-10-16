@@ -13,6 +13,7 @@ window.addEventListener('load',() => {
 
     MK.PREC_TIME  = 4;
     MK.PREC_SPACE = 3;
+    MK.NA_VAL     = "NA";
 
     MK.generateID = ()=>{ return Math.random().toString(36).substr(2,9); };
 
@@ -41,14 +42,14 @@ window.addEventListener('load',() => {
     if (PP.get('mk.dur')) MK._duration = parseInt( PP.get('mk.dur') );
 
     MK._filterNav = undefined;
-    if (PP.get('mk.nav')) MK._filterNav = parseInt( PP.get('mk.nav') );
+    if (PP.get('mk.nav')) MK._filterNav = PP.get('mk.nav');
 
     MK._bCapture = false;
 
     MK.resetChunk = ()=>{
         MK._rCount = 0;
 
-        MK._csvdata = "time, nav, posx, posy, posz, dirx, diry, dirz, fov";
+        MK._csvdata = "time, nav, posx, posy, posz, dirx, diry, dirz, fov\n";
         MK._data = [];
     };
 
@@ -141,43 +142,25 @@ window.addEventListener('load',() => {
         // Send data chunk
         if (MK._rCount >= MK._chunkSize) MK.sendDataChunk();
 
-/*
-        if (MK._rCount >= MK._chunkSize){
-            ATON.Utils.downloadText(MK._csvdata, MK._fname);
-            //console.log(MK._data)
+        let px = cpov.pos.x.toPrecision(MK.PREC_SPACE);
+        let py = cpov.pos.y.toPrecision(MK.PREC_SPACE);
+        let pz = cpov.pos.z.toPrecision(MK.PREC_SPACE);
 
-
-            ATON.Utils.postJSON(MK.API+"r/", {rid: rid, data: MK._data}, (b)=>{
-                console.log("Record sent");
-            });
-            
-            MK.resetChunk();
-
-            MK._rCount = -1;
-            return;
-        }
-*/
-
-        let px = cpov.pos.x;
-        let py = cpov.pos.y;
-        let pz = cpov.pos.z;
-
-        let dx = ATON.Nav._vDir.x;
-        let dy = ATON.Nav._vDir.y;
-        let dz = ATON.Nav._vDir.z;
+        let dx = ATON.Nav._vDir.x.toPrecision(MK.PREC_SPACE);
+        let dy = ATON.Nav._vDir.y.toPrecision(MK.PREC_SPACE);
+        let dz = ATON.Nav._vDir.z.toPrecision(MK.PREC_SPACE);
 
         let fov = parseInt(ATON.Nav.getFOV());
 
-        let str = "\n";
-        
-        // Time
-        str += ATON.getElapsedTime().toPrecision(MK.PREC_TIME) + ",";
+        let t = ATON.getElapsedTime().toPrecision(MK.PREC_TIME);
 
         // Nav
         let nav = "";
         if (ATON.XR._bPresenting){
             if (ATON.XR._sessionType === "immersive-ar") nav = "AR";
             else nav = "VR";
+
+            fov = MK.NA_VAL;
         }
         else {
             if (ATON.Nav.isOrbit()) nav = "OB";
@@ -185,32 +168,38 @@ window.addEventListener('load',() => {
             if (ATON.Nav.isDevOri()) nav = "DO";
         }
 
+/*
+        let str = "";
+        
+        // Time
+        str += t + ",";
+
         str += nav + ",";
 
         // Position
-        str += px.toPrecision(MK.PREC_SPACE) + ",";
-        str += py.toPrecision(MK.PREC_SPACE) + ",";
-        str += pz.toPrecision(MK.PREC_SPACE) + ",";
+        str += px + ",";
+        str += py + ",";
+        str += pz + ",";
 
         // Direction
-        str += dx.toPrecision(MK.PREC_SPACE) + ",";
-        str += dy.toPrecision(MK.PREC_SPACE) + ",";
-        str += dz.toPrecision(MK.PREC_SPACE) + ",";
+        str += dx + ",";
+        str += dy + ",";
+        str += dz + ",";
         
         // FoV
         str += fov;
 
+        MK._csvdata += str;
+        //console.log(str);
+*/
+
         MK._data.push({
-            time: ATON.getElapsedTime().toPrecision(MK.PREC_TIME),
+            time: t,
             nav: nav,
-            pos: [ px.toPrecision(MK.PREC_SPACE), py.toPrecision(MK.PREC_SPACE), pz.toPrecision(MK.PREC_SPACE) ],
-            dir: [ dx.toPrecision(MK.PREC_SPACE), dy.toPrecision(MK.PREC_SPACE), dz.toPrecision(MK.PREC_SPACE) ],
+            pos: [ px, py, pz ],
+            dir: [ dx, dy, dz ],
             fov: fov
         });
-        
-        MK._csvdata += str;
-
-        //console.log(str);
 
         MK._rCount++;
     };
