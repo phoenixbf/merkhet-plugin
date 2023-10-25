@@ -31,12 +31,13 @@ window.addEventListener('load',() => {
     MK._chunkSize = 50;  
     MK._bSending = false;
     
-    let rid = MK.generateID();
-    MK._fname = rid + ".csv";
+    let rid = "rid";
+    //MK._fname = rid + ".csv";
     MK._freq = undefined;
     MK._sid  = undefined;
 
     MK._tStart = undefined;
+    MK._vrUPy = 0.0;
     
     MK._duration = 60;
     if (PP.get('mk.dur')) MK._duration = parseInt( PP.get('mk.dur') );
@@ -46,17 +47,38 @@ window.addEventListener('load',() => {
 
     MK._bCapture = false;
 
+    // Internal datachunk reset
     MK.resetChunk = ()=>{
         MK._rCount = 0;
+        MK._data = [];
 
         MK._csvdata = "time, nav, posx, posy, posz, dirx, diry, dirz, fov\n";
-        MK._data = [];
+    };
+
+    MK.startNewRecord = ()=>{
+        MK._tStart = undefined;
+        rid = MK.generateID();
+        //MK._fname = rid + ".csv";
+
+        MK.resetChunk();
+        MK._bCapture = true;
+        console.log("START NEW RECORD "+rid);
+    };
+
+    MK.stopCurrentRecord = ()=>{
+        if (!MK._bCapture) return;
+
+        MK.sendDataChunk();
+
+        MK._bCapture = false;
+        console.log("STOP RECORD "+rid);
     };
 
     MK.setup = ()=>{
         MK._freq = parseInt(freq);
         if (MK._freq >= 50){
             window.setInterval(MK.mark, MK._freq);
+            MK.startNewRecord();
         }
 
         ATON.on("SceneJSONLoaded", sid =>{
@@ -72,8 +94,8 @@ window.addEventListener('load',() => {
                 }
             }
             else {    
-                MK._fname = MK._sid+"-"+rid+".csv";
-                console.log(MK._fname);
+                //MK._fname = MK._sid+"-"+rid+".csv";
+                //console.log(MK._fname);
             }
         });
 
@@ -87,11 +109,11 @@ window.addEventListener('load',() => {
         ATON.on("XRmode", b =>{
             if (!MK._freq) return;
 
-            MK.resetChunk();
+            //MK.resetChunk();
 
             if (b){
-                if (MK._sid !== undefined) MK._fname = MK._sid+"-"+rid+"-xr.csv";
-                else MK._fname = rid+"-xr.csv";
+                //if (MK._sid !== undefined) MK._fname = MK._sid+"-"+rid+"-xr.csv";
+                //else MK._fname = rid+"-xr.csv";
             }
         });
 
@@ -131,10 +153,7 @@ window.addEventListener('load',() => {
         if (MK._tStart === undefined) MK._tStart = ATON._clock.elapsedTime;
         else {
             if ((ATON._clock.elapsedTime - MK._tStart) > MK._duration){
-                MK.sendDataChunk();
-                
-                MK._bCapture = false;
-                console.log("END");
+                MK.stopCurrentRecord();
                 return;
             }
         }
@@ -204,11 +223,17 @@ window.addEventListener('load',() => {
         MK._rCount++;
     };
 
-/*
-    MK.update = ()=>{
 
+    MK.update = ()=>{
+        if (ATON.XR._bPresenting){
+            MK._vrUPy = ATON.Nav._camera.matrix.elements[5];
+
+            if (MK._vrUPy < -0.7 && MK._bCapture)  MK.stopCurrentRecord();
+            if (MK._vrUPy > 0.0 && !MK._bCapture) MK.startNewRecord();
+
+        }
     };
-*/
+
 
     MK.renderCSVRecord = (data)=>{
         let rows = data.split("\n");
