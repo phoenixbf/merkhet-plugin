@@ -169,6 +169,18 @@ window.addEventListener('load',() => {
         let dy = ATON.Nav._vDir.y.toPrecision(MK.PREC_SPACE);
         let dz = ATON.Nav._vDir.z.toPrecision(MK.PREC_SPACE);
 
+        let fx = MK.NA_VAL;
+        let fy = MK.NA_VAL;
+        let fz = MK.NA_VAL;
+
+        if (ATON._queryDataScene){
+            let fp = ATON._queryDataScene.p;
+
+            fx = fp.x.toPrecision(MK.PREC_SPACE);;
+            fy = fp.y.toPrecision(MK.PREC_SPACE);;
+            fz = fp.z.toPrecision(MK.PREC_SPACE);;
+        }
+
         let fov = parseInt(ATON.Nav.getFOV());
 
         let t = ATON.getElapsedTime().toPrecision(MK.PREC_TIME);
@@ -217,6 +229,7 @@ window.addEventListener('load',() => {
             nav: nav,
             pos: [ px, py, pz ],
             dir: [ dx, dy, dz ],
+            foc: [ fx, fy, fz ],
             fov: fov
         });
 
