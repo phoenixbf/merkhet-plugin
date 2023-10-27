@@ -63,6 +63,8 @@ window.addEventListener('load',() => {
         MK.resetChunk();
         MK._bCapture = true;
         console.log("START NEW RECORD "+rid);
+
+        ATON.fireEvent("MK_TrackingStart");
     };
 
     MK.stopCurrentRecord = ()=>{
@@ -72,6 +74,8 @@ window.addEventListener('load',() => {
 
         MK._bCapture = false;
         console.log("STOP RECORD "+rid);
+
+        ATON.fireEvent("MK_TrackingStop");
     };
 
     MK.setup = ()=>{
@@ -145,6 +149,7 @@ window.addEventListener('load',() => {
             if (MK._filterNav==="OB" && !ATON.Nav.isOrbit()) return;
             if (MK._filterNav==="FP" && !ATON.Nav.isFirstPerson()) return;
             if (MK._filterNav==="DO" && !ATON.Nav.isDevOri()) return;
+            if (MK._filterNav==="VR" && !ATON.XR._bPresenting) return;
         }
 
         let cpov = ATON.Nav._currPOV;
@@ -241,9 +246,12 @@ window.addEventListener('load',() => {
         if (ATON.XR._bPresenting){
             MK._vrUPy = ATON.Nav._camera.matrix.elements[5];
 
-            if (MK._vrUPy < -0.7 && MK._bCapture)  MK.stopCurrentRecord();
-            if (MK._vrUPy > 0.0 && !MK._bCapture) MK.startNewRecord();
-
+            if (MK._vrUPy < -0.7 && MK._bCapture){
+                MK.stopCurrentRecord();
+            }
+            if (MK._vrUPy > 0.0 && !MK._bCapture){
+                MK.startNewRecord();
+            }
         }
     };
 
