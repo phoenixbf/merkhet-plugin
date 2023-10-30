@@ -15,14 +15,29 @@ window.addEventListener('load',() => {
     MK.PREC_SPACE = 3;
     MK.NA_VAL     = "NA";
 
-    MK.generateID = ()=>{ return Math.random().toString(36).substr(2,9); };
+    ATON.addFlare( MK, "Merkhet" );
 
-    let PP   = new URLSearchParams(window.location.search);
+    MK.generateID = ()=>{
+        return Math.random().toString(36).substr(2,9);
+    };
+    MK.setDuration = (d)=>{
+        MK._duration = d;
+    };
+    MK.setNavModeFilter = (navmode)=>{
+        MK._filterNav = navmode;
+    };
+    MK.setInterval = (f)=>{
+        MK._freq = f;
+    };
+
+    let PP = new URLSearchParams(window.location.search);
     
-    let freq = PP.get('mk.freq');
+    MK._freq = undefined;
+    MK._freq = parseInt( PP.get('mk.freq') );
+    
     MK._loadrid = PP.get('mk.load');
 
-    if (!freq && !MK._loadrid) return;
+    //if (!MK._freq && !MK._loadrid) return;
 
     MK._rCount = 0;
     MK._data   = [];
@@ -33,17 +48,16 @@ window.addEventListener('load',() => {
     
     let rid = "rid";
     //MK._fname = rid + ".csv";
-    MK._freq = undefined;
     MK._sid  = undefined;
 
     MK._tStart = undefined;
     MK._vrUPy = 0.0;
     
     MK._duration = 60;
-    if (PP.get('mk.dur')) MK._duration = parseInt( PP.get('mk.dur') );
+    if (PP.get('mk.dur')) MK.setDuration( parseInt( PP.get('mk.dur') ) );
 
     MK._filterNav = undefined;
-    if (PP.get('mk.nav')) MK._filterNav = PP.get('mk.nav');
+    if (PP.get('mk.nav')) MK.setNavModeFilter( PP.get('mk.nav') );
 
     MK._bCapture = false;
 
@@ -52,11 +66,11 @@ window.addEventListener('load',() => {
         MK._rCount = 0;
         MK._data = [];
 
-        MK._csvdata = "time, nav, posx, posy, posz, dirx, diry, dirz, fov\n";
+       //MK._csvdata = "time, nav, posx, posy, posz, dirx, diry, dirz, fov\n";
     };
 
     MK.startNewRecord = ()=>{
-        MK._tStart = undefined;
+        MK._tStart = ATON._clock.elapsedTime;
         rid = MK.generateID();
         //MK._fname = rid + ".csv";
 
@@ -79,7 +93,6 @@ window.addEventListener('load',() => {
     };
 
     MK.setup = ()=>{
-        MK._freq = parseInt(freq);
         if (MK._freq >= 50){
             window.setInterval(MK.mark, MK._freq);
             MK.startNewRecord();
@@ -155,13 +168,13 @@ window.addEventListener('load',() => {
         let cpov = ATON.Nav._currPOV;
         if (!cpov) return;
 
-        if (MK._tStart === undefined) MK._tStart = ATON._clock.elapsedTime;
-        else {
+        //if (MK._tStart === undefined) MK._tStart = ATON._clock.elapsedTime;
+        //else {
             if ((ATON._clock.elapsedTime - MK._tStart) > MK._duration){
                 MK.stopCurrentRecord();
                 return;
             }
-        }
+        //}
 
         // Send data chunk
         if (MK._rCount >= MK._chunkSize) MK.sendDataChunk();
@@ -276,6 +289,4 @@ window.addEventListener('load',() => {
 
         }
     };
-
-    ATON.addFlare( MK );
 });
