@@ -33,12 +33,16 @@ window.addEventListener('load',() => {
     let PP = new URLSearchParams(window.location.search);
     
     MK._freq = undefined;
-    MK._freq = parseInt( PP.get('mk.freq') );
+    if (PP.get("mk.freq")){
+        MK._freq = parseInt( PP.get('mk.freq') );
+    }
     
-    MK._loadrid = PP.get('mk.load');
+    
+    //MK._loadrid = PP.get('mk.load');
 
     //if (!MK._freq && !MK._loadrid) return;
 
+    MK._bStarted = false;
     MK._rCount = 0;
     MK._data   = [];
     
@@ -92,15 +96,20 @@ window.addEventListener('load',() => {
         ATON.fireEvent("MK_TrackingStop");
     };
 
-    MK.setup = ()=>{
-        if (MK._freq >= 50){
-            window.setInterval(MK.mark, MK._freq);
-            MK.startNewRecord();
-        }
+    MK.start = ()=>{
+        if (MK._freq < 50) return;
+        if (MK._bStarted) return;
 
+        window.setInterval(MK.mark, MK._freq);
+        MK._bStarted = true;
+
+        MK.startNewRecord();
+    };
+
+    MK.setup = ()=>{
         ATON.on("SceneJSONLoaded", sid =>{
             MK._sid = sid.replace("/","-");
-
+/*
             if (!MK._freq){
                 if (MK._loadrid){
                     
@@ -114,6 +123,7 @@ window.addEventListener('load',() => {
                 //MK._fname = MK._sid+"-"+rid+".csv";
                 //console.log(MK._fname);
             }
+*/
         });
 
         ATON.on("AllNodeRequestsCompleted", ()=>{
@@ -135,6 +145,8 @@ window.addEventListener('load',() => {
         });
 
         console.log("Merkhet flare initialized.");
+
+        if (MK._freq >= 50) MK.start();
     };
 
     MK.sendDataChunk = ()=>{
@@ -268,7 +280,7 @@ window.addEventListener('load',() => {
         }
     };
 
-
+    // Move into dedicated Merkhet app
     MK.renderCSVRecord = (data)=>{
         let rows = data.split("\n");
         let num = rows.length;
