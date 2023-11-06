@@ -97,7 +97,7 @@ window.addEventListener('load',() => {
     };
 
     MK.start = ()=>{
-        if (MK._freq < 50) return;
+        if (!MK._freq || MK._freq < 50) return;
         if (MK._bStarted) return;
 
         window.setInterval(MK.mark, MK._freq);
