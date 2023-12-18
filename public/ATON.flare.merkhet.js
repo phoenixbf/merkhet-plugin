@@ -13,7 +13,7 @@ window.addEventListener('load',() => {
 let MK = new ATON.Flare();
 MK.API = `${ATON.BASE_URL}/mkhet/`;
 
-MK.PREC_TIME  = 4;
+MK.PREC_TIME  = 2;
 MK.PREC_SPACE = 3;
 MK.NA_VAL     = "NA";
 
