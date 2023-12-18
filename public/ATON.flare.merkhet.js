@@ -195,13 +195,13 @@ MK.mark = ()=>{
     // Send data chunk
     if (MK._rCount >= MK._chunkSize) MK.sendDataChunk();
 
-    let px = cpov.pos.x.toPrecision(MK.PREC_SPACE);
-    let py = cpov.pos.y.toPrecision(MK.PREC_SPACE);
-    let pz = cpov.pos.z.toPrecision(MK.PREC_SPACE);
+    let px = cpov.pos.x.toFixed(MK.PREC_SPACE);
+    let py = cpov.pos.y.toFixed(MK.PREC_SPACE);
+    let pz = cpov.pos.z.toFixed(MK.PREC_SPACE);
 
-    let dx = ATON.Nav._vDir.x.toPrecision(MK.PREC_SPACE);
-    let dy = ATON.Nav._vDir.y.toPrecision(MK.PREC_SPACE);
-    let dz = ATON.Nav._vDir.z.toPrecision(MK.PREC_SPACE);
+    let dx = ATON.Nav._vDir.x.toFixed(MK.PREC_SPACE);
+    let dy = ATON.Nav._vDir.y.toFixed(MK.PREC_SPACE);
+    let dz = ATON.Nav._vDir.z.toFixed(MK.PREC_SPACE);
 
     let fx = MK.NA_VAL;
     let fy = MK.NA_VAL;
@@ -210,14 +210,14 @@ MK.mark = ()=>{
     if (ATON._queryDataScene){
         let fp = ATON._queryDataScene.p;
 
-        fx = fp.x.toPrecision(MK.PREC_SPACE);;
-        fy = fp.y.toPrecision(MK.PREC_SPACE);;
-        fz = fp.z.toPrecision(MK.PREC_SPACE);;
+        fx = fp.x.toFixed(MK.PREC_SPACE);;
+        fy = fp.y.toFixed(MK.PREC_SPACE);;
+        fz = fp.z.toFixed(MK.PREC_SPACE);;
     }
 
     let fov = parseInt(ATON.Nav.getFOV());
 
-    let t = ATON.getElapsedTime().toPrecision(MK.PREC_TIME);
+    let t = ATON.getElapsedTime().toFixed(MK.PREC_TIME);
 
     // Nav
     let nav = "";
