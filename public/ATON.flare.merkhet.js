@@ -210,9 +210,9 @@ MK.mark = ()=>{
     if (ATON._queryDataScene){
         let fp = ATON._queryDataScene.p;
 
-        fx = fp.x.toFixed(MK.PREC_SPACE);;
-        fy = fp.y.toFixed(MK.PREC_SPACE);;
-        fz = fp.z.toFixed(MK.PREC_SPACE);;
+        fx = fp.x.toFixed(MK.PREC_SPACE);
+        fy = fp.y.toFixed(MK.PREC_SPACE);
+        fz = fp.z.toFixed(MK.PREC_SPACE);
     }
 
     let fov = parseInt(ATON.Nav.getFOV());
@@ -281,46 +281,6 @@ MK.update = ()=>{
         if (MK._vrUPy > 0.0 && !MK._bCapture){
             MK.startNewRecord();
         }
-    }
-};
-
-/*
-    Inspector
-========================================*/
-MK.Inspector = {};
-
-MK.Inspector.init = ()=>{
-    MK.Inspector._loadedRR = {};
-
-    if (PP.get("mk.rid")){
-        let rid = PP.get('mk.rid');
-    }
-
-
-    ATON.FE.uiAddProfile("merkhet", ()=>{
-        $("#idTopToolbar").html(""); // clear
-    
-    });
-};
-
-MK.Inspector.loadRecord = (data)=>{
-    let rows = data.split("\n");
-    let num = rows.length;
-    let values;
-
-    //console.log(rows)
-
-    for (let m=1; m<num; m++){
-        let M = rows[m];
-
-        values = M.split(",");
-
-        let px = parseFloat(values[1]);
-        let py = parseFloat(values[2]);
-        let pz = parseFloat(values[3]);
-
-        console.log(px,py,pz);
-
     }
 };
 
