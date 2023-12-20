@@ -82,7 +82,7 @@ MK.startNewRecord = ()=>{
 
     MK.resetChunk();
     MK._bCapture = true;
-    console.log("START NEW RECORD "+rid);
+    console.log("[Merkhet Flare] START NEW RECORD "+rid);
 
     ATON.fireEvent("MK_TrackingStart");
 };
@@ -93,7 +93,7 @@ MK.stopCurrentRecord = ()=>{
     MK.sendDataChunk();
 
     MK._bCapture = false;
-    console.log("STOP RECORD "+rid);
+    console.log("[Merkhet Flare] STOP RECORD "+rid);
 
     ATON.fireEvent("MK_TrackingStop");
 };
@@ -109,8 +109,6 @@ MK.start = ()=>{
 };
 
 MK.setup = ()=>{
-    MK.Inspector.init();
-
     ATON.on("SceneJSONLoaded", sid =>{
         MK._sid = sid.replace("/","-");
 /*
@@ -148,7 +146,7 @@ MK.setup = ()=>{
         }
     });
 
-    console.log("Merkhet flare initialized.");
+    console.log("[Merkhet Flare] initialized.");
 
     if (MK._freq >= 50) MK.start();
 };
@@ -164,7 +162,7 @@ MK.sendDataChunk = ()=>{
     chunk.sid  = MK._sid;
 
     ATON.Utils.postJSON(MK.API+"r/", chunk, (b)=>{
-        console.log("Record sent");
+        console.log("[Merkhet Flare] Record sent");
         MK.resetChunk();
         MK._bSending = false;
     });

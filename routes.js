@@ -3,13 +3,21 @@ const MKHET = {};
 const fs      = require('fs');
 const path    = require('path');
 const makeDir = require('make-dir');
+const fg      = require('fast-glob');
 
 MKHET.API = "/mkhet/";
 
 MKHET.init = (app)=>{
     console.log("Merkhet component started");
 
-    MKHET.DIR_RECORDS = path.join(__dirname,"/records/");
+    let configpath = path.join(__dirname,"config.json");
+	if (fs.existsSync(configpath)){
+		MKHET.conf = JSON.parse(fs.readFileSync(configpath, 'utf8'));
+		console.log("[Merkhet Flare] Found custom config "+configpath);
+    }
+
+    if (MKHET.conf.recordsfolder) MKHET.DIR_RECORDS = MKHET.conf.recordsfolder;
+    else MKHET.DIR_RECORDS = path.join(__dirname,"/records/");
 
     if (!fs.existsSync(MKHET.DIR_RECORDS)) makeDir.sync(MKHET.DIR_RECORDS);
 
@@ -42,15 +50,18 @@ MKHET.init = (app)=>{
         let sid = req.params.sid;
         let rid = req.params.rid;
 
-        let rpath = path.join( MKHET.DIR_RECORDS, sid+"/"+rid );
-        res.sendFile( rpath );
-/*
-        fs.readFile(rpath,'utf8', (err, data) => {
-            if (err) console.error(err);
+        if (rid==="@"){
+            let sidfolder = MKHET.DIR_RECORDS + sid;
+            console.log(sidfolder)
 
-            res.send( data );
-          });
-*/  
+            let frecords = fg.sync("*.*", {cwd: sidfolder, follow: true});
+            console.log(frecords)
+            res.send(frecords);
+        }
+        else {
+            let rpath = path.join( MKHET.DIR_RECORDS, sid+"/"+rid );
+            res.sendFile( rpath );
+        }
 
         //next();
     });
