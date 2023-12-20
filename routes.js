@@ -8,7 +8,7 @@ const fg      = require('fast-glob');
 MKHET.API = "/mkhet/";
 
 MKHET.init = (app)=>{
-    console.log("Merkhet component started");
+    console.log("[Merkhet Flare] started");
 
     let configpath = path.join(__dirname,"config.json");
 	if (fs.existsSync(configpath)){
