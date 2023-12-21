@@ -11,9 +11,13 @@ MKHET.init = (app)=>{
     console.log("[Merkhet Flare] started");
 
     let configpath = path.join(__dirname,"config.json");
+    console.log(configpath);
+
+    MKHET.conf = {};
+
 	if (fs.existsSync(configpath)){
-		MKHET.conf = JSON.parse(fs.readFileSync(configpath, 'utf8'));
-		console.log("[Merkhet Flare] Found custom config "+configpath);
+		MKHET.conf = JSON.parse( fs.readFileSync(configpath, 'utf8') );
+		console.log("[Merkhet Flare] Found custom config " + configpath);
     }
 
     if (MKHET.conf.recordsfolder) MKHET.DIR_RECORDS = MKHET.conf.recordsfolder;
