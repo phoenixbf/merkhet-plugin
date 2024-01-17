@@ -25,8 +25,6 @@ MKHET.init = (app)=>{
 
     if (!fs.existsSync(MKHET.DIR_RECORDS)) makeDir.sync(MKHET.DIR_RECORDS);
 
-    //MKHET.sessions = {};
-
     // API
     app.post(MKHET.API+'r/', (req, res) => {
         let O = req.body;
@@ -58,7 +56,7 @@ MKHET.init = (app)=>{
             let sidfolder = MKHET.DIR_RECORDS + sid;
             console.log(sidfolder)
 
-            let frecords = fg.sync("*.*", {cwd: sidfolder, follow: true});
+            let frecords = fg.sync("{*.csv,*.json}", {cwd: sidfolder, follow: true});
             console.log(frecords)
             res.send(frecords);
         }
