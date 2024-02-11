@@ -13,7 +13,7 @@ MK.PREC_TIME  = 2;
 MK.PREC_SPACE = 3;
 MK.NA_VAL     = "NA";
 
-ATON.addFlare( MK, "Merkhet" );
+MK.register("Merkhet");
 
 MK.generateID = ()=>{
     return Math.random().toString(36).substr(2,9);
