@@ -6,10 +6,6 @@
     author: bruno.fanini_AT_gmail.com
 
 ===========================================================*/
-
-window.addEventListener('load',() => {
-
-
 let MK = new ATON.Flare();
 MK.API = `${ATON.BASE_URL}/mkhet/`;
 
@@ -281,5 +277,3 @@ MK.update = ()=>{
         }
     }
 };
-
-});
