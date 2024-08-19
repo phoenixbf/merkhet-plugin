@@ -72,7 +72,7 @@
 
         MK.resetChunk();
         MK._bCapture = true;
-        console.log("[Merkhet Flare] START NEW RECORD "+rid);
+        MK.log("START NEW RECORD "+rid);
 
         ATON.fireEvent("MK_TrackingStart");
     };
@@ -83,7 +83,7 @@
         MK.sendDataChunk();
 
         MK._bCapture = false;
-        console.log("[Merkhet Flare] STOP RECORD "+rid);
+        MK.log("STOP RECORD "+rid);
 
         ATON.fireEvent("MK_TrackingStop");
     };
@@ -136,7 +136,7 @@
             }
         });
 
-        console.log("[Merkhet Flare] initialized.");
+        MK.log("initialized.");
 
         MK.start();
     };
@@ -152,7 +152,7 @@
         chunk.sid  = MK._sid;
 
         ATON.Utils.postJSON(MK.API+"r/", chunk, (b)=>{
-            console.log("[Merkhet Flare] Record sent");
+            MK.log("Record sent");
             MK.resetChunk();
             MK._bSending = false;
         });
