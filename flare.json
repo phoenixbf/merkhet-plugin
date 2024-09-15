@@ -5,10 +5,5 @@
         "files": [
             "ATON.flare.merkhet.js"
         ]
-    },
-    "server":{
-        "modules":[
-            "routes.js"
-        ]
     }
 }
