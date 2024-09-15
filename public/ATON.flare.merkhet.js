@@ -43,7 +43,20 @@
     MK.onFrame = ()=>{
         let S = {};
         
-        S.t = ATON.getElapsedTime().toFixed(MK.PREC_TIME); 
+        S.t = ATON.getElapsedTime().toFixed(MK.PREC_TIME);
+
+        S.nav = "";
+        if (ATON.XR._bPresenting){
+            if (ATON.XR._sessionType === "immersive-ar") S.nav = "AR";
+            else S.nav = "VR";
+
+            S.fov = MK.NA_VAL;
+        }
+        else {
+            if (ATON.Nav.isOrbit())       S.nav = "OB";
+            if (ATON.Nav.isFirstPerson()) S.nav = "FP";
+            if (ATON.Nav.isDevOri())      S.nav = "DO";
+        }
 
         let cpov = ATON.Nav._currPOV;
         let vdir = ATON.Nav._vDir;
@@ -70,19 +83,6 @@
         }
 
         S.fov = parseInt(ATON.Nav.getFOV());
-
-        S.nav = "";
-        if (ATON.XR._bPresenting){
-            if (ATON.XR._sessionType === "immersive-ar") S.nav = "AR";
-            else S.nav = "VR";
-
-            S.fov = MK.NA_VAL;
-        }
-        else {
-            if (ATON.Nav.isOrbit())       S.nav = "OB";
-            if (ATON.Nav.isFirstPerson()) S.nav = "FP";
-            if (ATON.Nav.isDevOri())      S.nav = "DO";
-        }
 
         return S;
     };
@@ -140,6 +140,7 @@
     MK.tryStart = ()=>{
         if (!MK.bAllLoaded) return;
         if (!MK.bReady) return;
+        if (!MK._sid) return;
 
         if (CaptureHub.isRecording()) return;
 
