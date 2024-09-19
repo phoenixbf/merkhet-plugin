@@ -126,8 +126,6 @@
         ATON.on("XRmode", b =>{
             if (!MK._freq) return;
 
-            //MK.resetChunk();
-
             if (b){
                 //if (MK._sid !== undefined) MK._fname = MK._sid+"-"+rid+"-xr.csv";
                 //else MK._fname = rid+"-xr.csv";
@@ -166,10 +164,10 @@
             MK._vrUPy = ATON.Nav._camera.matrix.elements[5];
 
             if (MK._vrUPy < -0.7 && MK._bCapture){
-                //MK.stopCurrentRecord();
+                CaptureHub.stop();
             }
             if (MK._vrUPy > 0.0 && !MK._bCapture){
-                //MK.start();
+                MK.tryStart();
             }
         }
     };
