@@ -184,9 +184,10 @@
     MK.popupSession = ()=>{
         let htmlcontent = "<div class='atonPopupTitle'>Merkhet Flare</div>";
 
-        htmlcontent += "Current Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
-
-        if (CaptureHub.isRecording()) htmlcontent += "<div class='atonBTN atonBTN-rec atonBTN-horizontal' id='btnMK'>STOP</div>";
+        if (CaptureHub.isRecording()){
+            htmlcontent += "Current Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
+            htmlcontent += "<div class='atonBTN atonBTN-rec atonBTN-horizontal' id='btnMK'>STOP</div>";
+        }
         else htmlcontent += "<div class='atonBTN atonBTN-green atonBTN-horizontal' id='btnMK'>START</div>";
 
         if ( !ATON.FE.popupShow(htmlcontent) ) return;
