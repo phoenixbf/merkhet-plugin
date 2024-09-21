@@ -29,6 +29,7 @@
 
             MK.log("READY");
 
+            MK.setupUI();
             MK.tryStart();
         });
     };
@@ -90,7 +91,9 @@
     // Params
     let PP = new URLSearchParams(window.location.search);
 
-    if (PP.get("mk.hub")){
+    let hubaddr = PP.get("mk.hub");
+
+    if (hubaddr){
         MK.setHub( String(PP.get("mk.hub")) );
     }
 
@@ -170,5 +173,29 @@
                 MK.tryStart();
             }
         }
+    };
+
+    MK.setupUI = ()=>{
+        if (!CaptureHub.getHubServer()) return;
+
+        ATON.FE.uiAddButton("idTopToolbar","/flares/merkhet/icon.png", MK.popupSession);
+    };
+
+    MK.popupSession = ()=>{
+        let htmlcontent = "<div class='atonPopupTitle'>Merkhet Flare</div>";
+
+        htmlcontent += "Current Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
+
+        if (CaptureHub.isRecording()) htmlcontent += "<div class='atonBTN atonBTN-rec atonBTN-horizontal' id='btnMK'>STOP</div>";
+        else htmlcontent += "<div class='atonBTN atonBTN-green atonBTN-horizontal' id='btnMK'>START</div>";
+
+        if ( !ATON.FE.popupShow(htmlcontent) ) return;
+
+        $("#btnMK").click(()=>{
+            if (CaptureHub.isRecording()) CaptureHub.stop();
+            else MK.tryStart();
+
+            ATON.FE.popupClose();
+        });
     };
 }
