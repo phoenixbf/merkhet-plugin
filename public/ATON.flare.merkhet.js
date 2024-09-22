@@ -188,7 +188,10 @@
             htmlcontent += "Current Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
             htmlcontent += "<div class='atonBTN atonBTN-rec atonBTN-horizontal' id='btnMK'>STOP</div>";
         }
-        else htmlcontent += "<div class='atonBTN atonBTN-green atonBTN-horizontal' id='btnMK'>START</div>";
+        else {
+            if (CaptureHub._id) htmlcontent += "Last Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
+            htmlcontent += "<div class='atonBTN atonBTN-green atonBTN-horizontal' id='btnMK'>START</div>";
+        }
 
         if ( !ATON.FE.popupShow(htmlcontent) ) return;
 
