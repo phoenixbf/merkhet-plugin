@@ -114,6 +114,9 @@
     MK._filterNav = undefined;
     if (PP.get('mk.nav')) MK.setNavModeFilter( PP.get('mk.nav') );
 
+    MK._actor = undefined;
+    if (PP.get('mk.actor')) MK._actor = String(PP.get('mk.actor'));
+
 
     MK.setup = ()=>{
         ATON.on("SceneJSONLoaded", sid =>{
@@ -146,6 +149,8 @@
         if (CaptureHub.isRecording()) return;
 
         CaptureHub.setGroupID(MK._sid);
+        if (MK._actor) CaptureHub.setActorName(MK._actor);
+
         CaptureHub.start();
 
         MK._tStart = ATON._clock.elapsedTime;
