@@ -50,8 +50,6 @@
         if (ATON.XR._bPresenting){
             if (ATON.XR._sessionType === "immersive-ar") S.nav = "AR";
             else S.nav = "VR";
-
-            S.fov = MK.NA_VAL;
         }
         else {
             if (ATON.Nav.isOrbit())       S.nav = "OB";
@@ -84,6 +82,7 @@
         }
 
         S.fov = parseInt(ATON.Nav.getFOV());
+        if (ATON.XR._bPresenting) S.fov = MK.NA_VAL;
 
         return S;
     };
