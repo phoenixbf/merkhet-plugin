@@ -21,7 +21,7 @@
 
         if (!addr.endsWith("/")) addr += "/";
 
-        ATON.loadScript(addr+"capture.js", ()=>{
+        ATON.loadScript(addr+"kapto.js", ()=>{
             CaptureHub.setHubServer(addr);
             CaptureHub.setOnFrame( MK.onFrame );
 
