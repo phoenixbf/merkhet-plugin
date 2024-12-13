@@ -187,7 +187,9 @@
     MK._sid  = undefined;
 
     MK._tStart = undefined;
+
     MK._vrUPy = 0.0;
+    MK._bFlipped = false;
 
     MK._duration = 60; // Seconds
     if (PP.get('mk.dur')) MK.setDuration( parseInt( PP.get('mk.dur') ) );
@@ -261,11 +263,13 @@
         if (ATON.XR._bPresenting){
             MK._vrUPy = ATON.Nav._camera.matrix.elements[5];
 
-            if (MK._vrUPy < -0.7 && MK._bCapture){
+            if (MK._vrUPy < -0.7 && MK._bCapture && !MK._bFlipped){
                 Kapto.stop();
+                MK._bFlipped = true;
             }
-            if (MK._vrUPy > 0.0 && !MK._bCapture){
+            if (MK._vrUPy > 0.0 && !MK._bCapture && MK._bFlipped){
                 MK.tryStart();
+                MK._bFlipped = false;
             }
         }
     };
