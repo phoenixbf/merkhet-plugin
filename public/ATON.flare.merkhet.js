@@ -16,19 +16,9 @@
     MK.ATTRIBUTES = [
         //"t",
         "nav",
-
-        "posx",
-        "posy",
-        "posz",
-
-        "dirx",
-        "diry",
-        "dirz",
-
-        "selx",
-        "sely",
-        "selz",
-
+        "pos",
+        "dir",
+        "sel",
         "fov"
     ];
 
@@ -43,6 +33,11 @@
         ATON.loadScript(addr+"kapto.js", ()=>{
             Kapto.setHubServer(addr);
             Kapto.setOnFrame( MK.onFrame );
+
+            Kapto.onSessionID = (sesid)=>{
+                //console.log(sesid);
+                MK.suiSes.setText( sesid.substr(sesid.length-4) );
+            };
 
             MK.bReady = true;
 
@@ -62,50 +57,117 @@
 
     MK.onFrame = ()=>{
         let S = {};
-        
+
         S.t = ATON.getElapsedTime().toFixed(MK.PREC_TIME);
-
-        S.nav = "";
-        if (ATON.XR._bPresenting){
-            if (ATON.XR._sessionType === "immersive-ar") S.nav = "AR";
-            else S.nav = "VR";
-        }
-        else {
-            if (ATON.Nav.isOrbit())       S.nav = "OB";
-            if (ATON.Nav.isFirstPerson()) S.nav = "FP";
-            if (ATON.Nav.isDevOri())      S.nav = "DO";
-        }
-
-        if (MK._filterNav){
-            if (MK._filterNav !== S.nav) return undefined;
-        }
 
         let cpov = ATON.Nav._currPOV;
         let vdir = ATON.Nav._vDir;
-        //if (!cpov) return;
 
-        S.posx = cpov.pos.x.toFixed(MK.PREC_SPACE);
-        S.posy = cpov.pos.y.toFixed(MK.PREC_SPACE);
-        S.posz = cpov.pos.z.toFixed(MK.PREC_SPACE);
+        for (let a in MK.ATTRIBUTES){
+            let attr = MK.ATTRIBUTES[a];
 
-        S.dirx = vdir.x.toFixed(MK.PREC_SPACE);
-        S.diry = vdir.y.toFixed(MK.PREC_SPACE);
-        S.dirz = vdir.z.toFixed(MK.PREC_SPACE);
+            if (attr==="nav"){
+                S.nav = "";
+                if (ATON.XR._bPresenting){
+                    if (ATON.XR._sessionType === "immersive-ar") S.nav = "ar";
+                    else S.nav = "vr";
+                }
+                else {
+                    if (ATON.Nav.isOrbit())       S.nav = "ob";
+                    if (ATON.Nav.isFirstPerson()) S.nav = "fp";
+                    if (ATON.Nav.isDevOri())      S.nav = "do";
+                }
+        
+                if (MK._filterNav){
+                    if (MK._filterNav !== S.nav) return undefined;
+                }
+            }
 
-        S.selx = MK.NA_VAL;
-        S.sely = MK.NA_VAL;
-        S.selz = MK.NA_VAL;
+            if (attr==="pos"){
+                S.posx = cpov.pos.x.toFixed(MK.PREC_SPACE);
+                S.posy = cpov.pos.y.toFixed(MK.PREC_SPACE);
+                S.posz = cpov.pos.z.toFixed(MK.PREC_SPACE);
+            }
 
-        if (ATON._queryDataScene){
-            let fp = ATON._queryDataScene.p;
+            if (attr==="dir"){
+                S.dirx = vdir.x.toFixed(MK.PREC_SPACE);
+                S.diry = vdir.y.toFixed(MK.PREC_SPACE);
+                S.dirz = vdir.z.toFixed(MK.PREC_SPACE);
+            }
 
-            S.selx = fp.x.toFixed(MK.PREC_SPACE);
-            S.sely = fp.y.toFixed(MK.PREC_SPACE);
-            S.selz = fp.z.toFixed(MK.PREC_SPACE);
+            if (attr==="sel"){
+                S.selx = MK.NA_VAL;
+                S.sely = MK.NA_VAL;
+                S.selz = MK.NA_VAL;
+        
+                if (ATON._queryDataScene){
+                    let fp = ATON._queryDataScene.p;
+        
+                    S.selx = fp.x.toFixed(MK.PREC_SPACE);
+                    S.sely = fp.y.toFixed(MK.PREC_SPACE);
+                    S.selz = fp.z.toFixed(MK.PREC_SPACE);
+                }
+            }
+
+            if (attr==="fov"){
+                S.fov = parseInt(ATON.Nav.getFOV());
+                if (ATON.XR._bPresenting) S.fov = MK.NA_VAL;
+            }
+
+            // XR hands/controllers
+            if (attr==="lh_pos"){
+                S.lh_posx = MK.NA_VAL;
+                S.lh_posy = MK.NA_VAL;
+                S.lh_posz = MK.NA_VAL;
+
+                let lhp = ATON.XR.getControllerWorldLocation(ATON.XR.HAND_L);
+                if (ATON.XR._bPresenting && lhp){
+                    S.lh_posx = lhp.x;
+                    S.lh_posy = lhp.y;
+                    S.lh_posz = lhp.z;
+                }
+            }
+
+            if (attr==="rh_pos"){
+                S.rh_posx = MK.NA_VAL;
+                S.rh_posy = MK.NA_VAL;
+                S.rh_posz = MK.NA_VAL;
+
+                let rhp = ATON.XR.getControllerWorldLocation(ATON.XR.HAND_R);
+                if (ATON.XR._bPresenting && rhp){
+                    S.rh_posx = rhp.x;
+                    S.rh_posy = rhp.y;
+                    S.rh_posz = rhp.z;
+                }
+            }
+
+            if (attr==="lh_dir"){
+                S.lh_dirx = MK.NA_VAL;
+                S.lh_diry = MK.NA_VAL;
+                S.lh_dirz = MK.NA_VAL;
+
+                let lhd = ATON.XR.getControllerWorldDirection(ATON.XR.HAND_L);
+                if (ATON.XR._bPresenting && lhd){
+                    S.lh_dirx = lhd.x;
+                    S.lh_diry = lhd.y;
+                    S.lh_dirz = lhd.z;
+                }
+            }
+
+            if (attr==="rh_dir"){
+                S.rh_dirx = MK.NA_VAL;
+                S.rh_diry = MK.NA_VAL;
+                S.rh_dirz = MK.NA_VAL;
+
+                let rhd = ATON.XR.getControllerWorldDirection(ATON.XR.HAND_R);
+                if (ATON.XR._bPresenting && rhd){
+                    S.rh_dirx = rhd.x;
+                    S.rh_diry = rhd.y;
+                    S.rh_dirz = rhd.z;
+                }
+            }
+
         }
-
-        S.fov = parseInt(ATON.Nav.getFOV());
-        if (ATON.XR._bPresenting) S.fov = MK.NA_VAL;
 
         return S;
     };
@@ -114,10 +176,7 @@
     let PP = new URLSearchParams(window.location.search);
 
     let hubaddr = PP.get("mk.hub");
-
-    if (hubaddr){
-        MK.setHub( String(PP.get("mk.hub")) );
-    }
+    if (hubaddr) MK.setHub( String(PP.get("mk.hub")) );
 
     MK._freq = undefined;
     if (PP.get("mk.freq")){
@@ -139,6 +198,8 @@
     MK._actor = undefined;
     if (PP.get('mk.actor')) MK._actor = String(PP.get('mk.actor'));
 
+    if (PP.get('mk.attr')) MK.ATTRIBUTES = String(PP.get('mk.attr')).split(',');
+
 
     MK.setup = ()=>{
         ATON.on("SceneJSONLoaded", sid =>{
@@ -157,6 +218,13 @@
             if (b){
                 //if (MK._sid !== undefined) MK._fname = MK._sid+"-"+rid+"-xr.csv";
                 //else MK._fname = rid+"-xr.csv";
+            }
+        });
+
+        ATON.on("XRcontrollerConnected", (c)=>{
+            if (c === ATON.XR.HAND_L){
+                ATON.XR.controller1.add(MK.suiSes);
+                MK.suiSes.show();  
             }
         });
 
@@ -206,6 +274,15 @@
         if (!Kapto.getHubServer()) return;
 
         ATON.FE.uiAddButton("idTopToolbar","/flares/merkhet/icon.png", MK.popupSession);
+
+        MK.suiSes = new ATON.SUI.Label();
+        MK.suiSes.setText("----");
+
+        let pi2 = (Math.PI * 0.5);
+        MK.suiSes.setPosition(-0.2,-0.15,0).setRotation(-pi2,0.0,pi2).setScale(2.0);
+        
+        MK.suiSes.attachToRoot();
+        MK.suiSes.hide();
     };
 
     MK.popupSession = ()=>{
