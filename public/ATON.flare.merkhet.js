@@ -13,6 +13,25 @@
     MK.PREC_SPACE = 3;
     MK.NA_VAL     = "NA";
 
+    MK.ATTRIBUTES = [
+        //"t",
+        "nav",
+
+        "posx",
+        "posy",
+        "posz",
+
+        "dirx",
+        "diry",
+        "dirz",
+
+        "selx",
+        "sely",
+        "selz",
+
+        "fov"
+    ];
+
     MK.bReady     = false;
     MK.bAllLoaded = true;
 
@@ -22,8 +41,8 @@
         if (!addr.endsWith("/")) addr += "/";
 
         ATON.loadScript(addr+"kapto.js", ()=>{
-            CaptureHub.setHubServer(addr);
-            CaptureHub.setOnFrame( MK.onFrame );
+            Kapto.setHubServer(addr);
+            Kapto.setOnFrame( MK.onFrame );
 
             MK.bReady = true;
 
@@ -55,6 +74,10 @@
             if (ATON.Nav.isOrbit())       S.nav = "OB";
             if (ATON.Nav.isFirstPerson()) S.nav = "FP";
             if (ATON.Nav.isDevOri())      S.nav = "DO";
+        }
+
+        if (MK._filterNav){
+            if (MK._filterNav !== S.nav) return undefined;
         }
 
         let cpov = ATON.Nav._currPOV;
@@ -145,12 +168,12 @@
         if (!MK.bReady) return;
         if (!MK._sid) return;
 
-        if (CaptureHub.isRecording()) return;
+        if (Kapto.isRecording()) return;
 
-        CaptureHub.setGroupID(MK._sid);
-        if (MK._actor) CaptureHub.setActorName(MK._actor);
+        Kapto.setGroupID(MK._sid);
+        if (MK._actor) Kapto.setActorName(MK._actor);
 
-        CaptureHub.start();
+        Kapto.start();
 
         MK._tStart = ATON._clock.elapsedTime;
     };
@@ -159,9 +182,9 @@
     MK.update = ()=>{
         if (!MK.bReady) return;
 
-        if (CaptureHub.isRecording()){
+        if (Kapto.isRecording()){
             if ((ATON._clock.elapsedTime - MK._tStart) > MK._duration){
-                CaptureHub.stop();
+                Kapto.stop();
                 MK.log("STOP recording (max duration)");
                 return;
             }
@@ -171,7 +194,7 @@
             MK._vrUPy = ATON.Nav._camera.matrix.elements[5];
 
             if (MK._vrUPy < -0.7 && MK._bCapture){
-                CaptureHub.stop();
+                Kapto.stop();
             }
             if (MK._vrUPy > 0.0 && !MK._bCapture){
                 MK.tryStart();
@@ -180,7 +203,7 @@
     };
 
     MK.setupUI = ()=>{
-        if (!CaptureHub.getHubServer()) return;
+        if (!Kapto.getHubServer()) return;
 
         ATON.FE.uiAddButton("idTopToolbar","/flares/merkhet/icon.png", MK.popupSession);
     };
@@ -188,19 +211,19 @@
     MK.popupSession = ()=>{
         let htmlcontent = "<div class='atonPopupTitle'>Merkhet Flare</div>";
 
-        if (CaptureHub.isRecording()){
-            htmlcontent += "Current Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
+        if (Kapto.isRecording()){
+            htmlcontent += "Current Session ID:<br><b>"+Kapto._id+"<b><br><br>";
             htmlcontent += "<div class='atonBTN atonBTN-rec atonBTN-horizontal' id='btnMK'>STOP</div>";
         }
         else {
-            if (CaptureHub._id) htmlcontent += "Last Session ID:<br><b>"+CaptureHub._id+"<b><br><br>";
+            if (Kapto._id) htmlcontent += "Last Session ID:<br><b>"+Kapto._id+"<b><br><br>";
             htmlcontent += "<div class='atonBTN atonBTN-green atonBTN-horizontal' id='btnMK'>START</div>";
         }
 
         if ( !ATON.FE.popupShow(htmlcontent) ) return;
 
         $("#btnMK").click(()=>{
-            if (CaptureHub.isRecording()) CaptureHub.stop();
+            if (Kapto.isRecording()) Kapto.stop();
             else MK.tryStart();
 
             ATON.FE.popupClose();
