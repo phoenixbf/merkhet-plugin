@@ -211,7 +211,7 @@
     MK.popupSession = ()=>{
         let htmlcontent = "<div class='atonPopupTitle'>Merkhet Flare</div>";
 
-        if (Kapto.isRecording()){
+        if (Kapto.isRecording() && Kapto._id){
             htmlcontent += "Current Session ID:<br><b>"+Kapto._id+"<b><br><br>";
             htmlcontent += "<div class='atonBTN atonBTN-rec atonBTN-horizontal' id='btnMK'>STOP</div>";
         }
