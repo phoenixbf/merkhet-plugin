@@ -34,10 +34,10 @@
             Kapto.setHubServer(addr);
             Kapto.setOnFrame( MK.onFrame );
 
-            Kapto.onSessionID = (sesid)=>{
+            Kapto.setOnSessionID((sesid)=>{
                 //console.log(sesid);
                 MK.suiSes.setText( sesid.substr(sesid.length-4) );
-            };
+            });
 
             MK.bReady = true;
 
