@@ -254,6 +254,8 @@
         });
 
         ATON.on("XRcontrollerConnected", (c)=>{
+            if (!MK.suiSes) return;
+
             if (c === ATON.XR.HAND_L){
                 ATON.XR.controller1.add(MK.suiSes);
                 MK.suiSes.show();  
@@ -310,7 +312,7 @@
         ATON.FE.uiAddButton("idTopToolbar","/flares/merkhet/icon.png", MK.popupSession);
 
         MK.suiSes = new ATON.SUI.Label();
-        MK.suiSes.setText("----");
+        MK.suiSes.setText("----").setBaseColor(ATON.MatHub.colors.white).setTextColor(ATON.MatHub.colors.black);;
 
         let pi2 = (Math.PI * 0.5);
         MK.suiSes.setPosition(-0.2,-0.15,0).setRotation(-pi2,0.0,pi2).setScale(2.0);
