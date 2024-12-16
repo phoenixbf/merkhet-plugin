@@ -36,7 +36,7 @@
 
             Kapto.setOnSessionID((sesid)=>{
                 //console.log(sesid);
-                MK.suiSes.setText( sesid.substr(sesid.length-4) );
+                MK.suiSes.setText( sesid.substr(sesid.length-4).toUpperCase() );
             });
 
             MK.bReady = true;
