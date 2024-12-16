@@ -11,7 +11,7 @@
 
     MK.PREC_TIME  = 2;
     MK.PREC_SPACE = 3;
-    MK.NA_VAL     = "NA";
+    MK.NA_VAL     = "";
 
     MK.ATTRIBUTES = [
         //"t",
@@ -122,9 +122,9 @@
 
                 let lhp = ATON.XR.getControllerWorldLocation(ATON.XR.HAND_L);
                 if (ATON.XR._bPresenting && lhp){
-                    S.lh_posx = lhp.x;
-                    S.lh_posy = lhp.y;
-                    S.lh_posz = lhp.z;
+                    S.lh_posx = lhp.x.toFixed(MK.PREC_SPACE);
+                    S.lh_posy = lhp.y.toFixed(MK.PREC_SPACE);
+                    S.lh_posz = lhp.z.toFixed(MK.PREC_SPACE);
                 }
             }
 
@@ -135,9 +135,9 @@
 
                 let rhp = ATON.XR.getControllerWorldLocation(ATON.XR.HAND_R);
                 if (ATON.XR._bPresenting && rhp){
-                    S.rh_posx = rhp.x;
-                    S.rh_posy = rhp.y;
-                    S.rh_posz = rhp.z;
+                    S.rh_posx = rhp.x.toFixed(MK.PREC_SPACE);
+                    S.rh_posy = rhp.y.toFixed(MK.PREC_SPACE);
+                    S.rh_posz = rhp.z.toFixed(MK.PREC_SPACE);
                 }
             }
 
@@ -148,9 +148,9 @@
 
                 let lhd = ATON.XR.getControllerWorldDirection(ATON.XR.HAND_L);
                 if (ATON.XR._bPresenting && lhd){
-                    S.lh_dirx = lhd.x;
-                    S.lh_diry = lhd.y;
-                    S.lh_dirz = lhd.z;
+                    S.lh_dirx = lhd.x.toFixed(MK.PREC_SPACE);
+                    S.lh_diry = lhd.y.toFixed(MK.PREC_SPACE);
+                    S.lh_dirz = lhd.z.toFixed(MK.PREC_SPACE);
                 }
             }
 
@@ -161,9 +161,39 @@
 
                 let rhd = ATON.XR.getControllerWorldDirection(ATON.XR.HAND_R);
                 if (ATON.XR._bPresenting && rhd){
-                    S.rh_dirx = rhd.x;
-                    S.rh_diry = rhd.y;
-                    S.rh_dirz = rhd.z;
+                    S.rh_dirx = rhd.x.toFixed(MK.PREC_SPACE);
+                    S.rh_diry = rhd.y.toFixed(MK.PREC_SPACE);
+                    S.rh_dirz = rhd.z.toFixed(MK.PREC_SPACE);
+                }
+            }
+
+            if (attr==="lh_ori"){
+                S.lh_orix = MK.NA_VAL;
+                S.lh_oriy = MK.NA_VAL;
+                S.lh_oriz = MK.NA_VAL;
+                S.lh_oriw = MK.NA_VAL;
+
+                let lho = ATON.XR.getControllerWorldOrientation(ATON.XR.HAND_L);
+                if (ATON.XR._bPresenting && lho){
+                    S.lh_orix = lho.x.toFixed(MK.PREC_SPACE);
+                    S.lh_oriy = lho.y.toFixed(MK.PREC_SPACE);
+                    S.lh_oriz = lho.z.toFixed(MK.PREC_SPACE);
+                    S.lh_oriw = lho.w.toFixed(MK.PREC_SPACE);
+                }
+            }
+
+            if (attr==="rh_ori"){
+                S.rh_orix = MK.NA_VAL;
+                S.rh_oriy = MK.NA_VAL;
+                S.rh_oriz = MK.NA_VAL;
+                S.rh_oriw = MK.NA_VAL;
+
+                let rho = ATON.XR.getControllerWorldOrientation(ATON.XR.HAND_R);
+                if (ATON.XR._bPresenting && rho){
+                    S.rh_orix = rho.x.toFixed(MK.PREC_SPACE);
+                    S.rh_oriy = rho.y.toFixed(MK.PREC_SPACE);
+                    S.rh_oriz = rho.z.toFixed(MK.PREC_SPACE);
+                    S.rh_oriw = rho.w.toFixed(MK.PREC_SPACE);
                 }
             }
 
