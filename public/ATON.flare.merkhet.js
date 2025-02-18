@@ -37,6 +37,8 @@
             Kapto.setOnSessionID((sesid)=>{
                 //console.log(sesid);
                 MK.suiSes.setText( sesid.substr(sesid.length-4).toUpperCase() );
+
+                ATON.Photon.fire("KaptoSessionID", sesid);
             });
 
             MK.bReady = true;
