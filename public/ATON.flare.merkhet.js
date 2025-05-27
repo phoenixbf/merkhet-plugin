@@ -25,6 +25,8 @@
     MK.bReady     = false;
     MK.bAllLoaded = true;
 
+    MK.bPause = false;
+
     MK.setHub = (addr)=>{
         MK.log("Hub Address: "+addr);
 
@@ -58,6 +60,8 @@
     };
 
     MK.onFrame = ()=>{
+        if (MK.bPause) return undefined;
+
         let S = {};
 
         S.t = ATON.getElapsedTime().toFixed(MK.PREC_TIME);
