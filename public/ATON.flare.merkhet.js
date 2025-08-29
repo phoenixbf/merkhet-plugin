@@ -263,7 +263,7 @@
             if (!MK.suiSes) return;
 
             if (c === ATON.XR.HAND_L){
-                ATON.XR.controller1.add(MK.suiSes);
+                ATON.XR.getSecondaryController().add(MK.suiSes);
                 MK.suiSes.show();  
             }
         });
@@ -321,7 +321,7 @@
         MK.suiSes.setText("----").setBaseColor(ATON.MatHub.colors.white).setTextColor(ATON.MatHub.colors.black);;
 
         let pi2 = (Math.PI * 0.5);
-        MK.suiSes.setPosition(-0.2,-0.15,0).setRotation(-pi2,0.0,pi2).setScale(2.0);
+        MK.suiSes.setPosition(-0.3,0.15,0).setRotation(-pi2,pi2,pi2).setScale(2.0);
         
         MK.suiSes.attachToRoot();
         MK.suiSes.hide();
