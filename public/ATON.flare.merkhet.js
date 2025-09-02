@@ -276,7 +276,7 @@
         if (!MK.bReady) return;
         if (!MK._sid) return;
 
-        if (Kapto.isRecording()) return;
+        if (Kapto.isRecording()) return; // Already recording
 
         Kapto.setGroupID(MK._sid);
         if (MK._actor) Kapto.setActorName(MK._actor);
@@ -315,7 +315,7 @@
     MK.setupUI = ()=>{
         if (!Kapto.getHubServer()) return;
 
-        ATON.FE.uiAddButton("idTopToolbar","/flares/merkhet/icon.png", MK.popupSession);
+        //ATON.FE.uiAddButton("idTopToolbar","/flares/merkhet/icon.png", MK.popupSession);
 
         MK.suiSes = new ATON.SUI.Label();
         MK.suiSes.setText("----").setBaseColor(ATON.MatHub.colors.white).setTextColor(ATON.MatHub.colors.black);;
