@@ -203,6 +203,18 @@
                 }
             }
 
+            if (attr==="xr_rig"){
+                S.xr_rigx = MK.NA_VAL;
+                S.xr_rigy = MK.NA_VAL;
+                S.xr_rigz = MK.NA_VAL;
+
+                if (ATON.XR._bPresenting){
+                    S.xr_rigx = ATON.XR.rig.position.x;
+                    S.xr_rigy = ATON.XR.rig.position.y;
+                    S.xr_rigz = ATON.XR.rig.position.z;
+                }
+            }
+
         }
 
         return S;
@@ -289,6 +301,7 @@
 
     MK.update = ()=>{
         if (!MK.bReady) return;
+        //if (!MK.bPause) return;
 
         if (Kapto.isRecording()){
             if ((ATON._clock.elapsedTime - MK._tStart) > MK._duration){
