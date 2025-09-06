@@ -250,6 +250,8 @@
 
     if (PP.get('mk.attr')) MK.ATTRIBUTES = String(PP.get('mk.attr')).split(',');
 
+    if (PP.get('mk.gid')) MK._sid = String(PP.get('mk.gid'));
+
 
     MK.setup = ()=>{
         ATON.on("SceneJSONLoaded", sid =>{
