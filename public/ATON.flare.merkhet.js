@@ -41,6 +41,7 @@
                 MK.suiSes.setText( sesid.substr(sesid.length-4).toUpperCase() );
 
                 ATON.Photon.fire("KaptoSessionID", sesid);
+                ATON.fire("KaptoSessionID", sesid);
             });
 
             MK.bReady = true;
@@ -342,6 +343,7 @@
         MK.suiSes.hide();
     };
 
+/*  DEPRECATED
     MK.popupSession = ()=>{
         let htmlcontent = "<div class='atonPopupTitle'>Merkhet Flare</div>";
 
@@ -363,4 +365,5 @@
             ATON.FE.popupClose();
         });
     };
+*/
 }
